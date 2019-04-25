@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
+ * 设置了wrapper.setAutoGrowNestedPaths(true); 后，可以任意获取赋值
  * @author Keith Donald
  * @author Juergen Hoeller
  */
@@ -38,6 +39,9 @@ public class BeanWrapperAutoGrowingTests {
 
 	@Before
 	public void setUp() {
+		/**
+		 * 重要：是下面一切成立的前提
+		 */
 		wrapper.setAutoGrowNestedPaths(true);
 	}
 
@@ -47,19 +51,28 @@ public class BeanWrapperAutoGrowingTests {
 		assertNull(wrapper.getPropertyValue("nested.prop"));
 	}
 
+	/**
+	 * BeanWrapper可以设置属性中的属性
+	 */
 	@Test
 	public void setPropertyValueNullValueInNestedPath() {
+		System.out.println(bean.getNested());
 		wrapper.setPropertyValue("nested.prop", "test");
+		System.out.println(bean.getNested());
 		assertEquals("test", bean.getNested().getProp());
 	}
 
 	@Test(expected = NullValueInNestedPathException.class)
 	public void getPropertyValueNullValueInNestedPathNoDefaultConstructor() {
+		assertNull(wrapper.getPropertyValue("nestedNoConstructor"));
 		wrapper.getPropertyValue("nestedNoConstructor.prop");
 	}
 
 	@Test
 	public void getPropertyValueAutoGrowArray() {
+		/**
+		 * 获取的属性会被自动初始化
+		 */
 		assertNotNull(wrapper.getPropertyValue("array[0]"));
 		assertEquals(1, bean.getArray().length);
 		assertThat(bean.getArray()[0], instanceOf(Bean.class));
@@ -123,6 +136,9 @@ public class BeanWrapperAutoGrowingTests {
 
 	@Test
 	public void getPropertyValueAutoGrowListFailsAgainstLimit() {
+		/**
+		 * 设置数组自动增长赋值的限制
+		 */
 		wrapper.setAutoGrowCollectionLimit(2);
 		try {
 			assertNotNull(wrapper.getPropertyValue("list[4]"));
@@ -148,6 +164,9 @@ public class BeanWrapperAutoGrowingTests {
 
 	@Test
 	public void setPropertyValueAutoGrowMap() {
+		/**
+		 * 可以设置Map参数类型中的键值对
+		 */
 		wrapper.setPropertyValue("map[A]", new Bean());
 		assertThat(bean.getMap().get("A"), instanceOf(Bean.class));
 	}
