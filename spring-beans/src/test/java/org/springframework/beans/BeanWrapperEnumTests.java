@@ -28,6 +28,7 @@ import org.springframework.tests.sample.beans.GenericBean;
 import static org.junit.Assert.*;
 
 /**
+ * 可以通过BeanWrapper给其中类的枚举类型赋值等
  * @author Juergen Hoeller
  * @author Chris Beams
  */
